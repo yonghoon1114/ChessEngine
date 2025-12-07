@@ -84,31 +84,26 @@ U64 blackPawnMove(U64 blackPawn, U64 allOccupied, U64 whiteOccupied){
     return singlePush | doublePush | takePieceLeft | takePieceRight;
 };
 
-U64 blackKingMove(U64 blackKing, U64 blackOccupancy){
+U64 kingMove(U64 king, U64 blackOcc, U64 whiteOcc, int color)
+{
+    U64 ownPieces = (color == 0) ? whiteOcc : blackOcc;
+   
 
-    U64 canMove = ~blackOccupancy; // check team's pieces
-    U64 goLeft = (blackKing >> 1) & canMove & ~FILE_A ;
-    U64 goRight = (blackKing << 1) & canMove & ~FILE_H ;
-    U64 goUp = (blackKing << 8) & canMove;
-    U64 goDown = (blackKing >> 8) & canMove;
-    U64 leftDownDiagnol = (blackKing >> 7) & canMove;
-    U64 leftUpDiagnol = (blackKing << 7) & canMove;
-    U64 rightDownDiagnol = (blackKing >> 9) & canMove;
-    U64 leftDownDiagnol = (blackKing >> )
+    U64 moves = 0;
 
+    // left / right
+    moves |= (king >> 1) & ~ownPieces & ~FILE_A;
+    moves |= (king << 1) & ~ownPieces & ~FILE_H;
 
-    return goLeft | goRight | goUp | goDown;
+    // up / down
+    moves |= (king << 8) & ~ownPieces;
+    moves |= (king >> 8) & ~ownPieces;
 
-};
+    // diagonals
+    moves |= (king << 7) & ~ownPieces & ~FILE_H; // up-left
+    moves |= (king << 9) & ~ownPieces & ~FILE_A; // up-right
+    moves |= (king >> 7) & ~ownPieces & ~FILE_A; // down-left
+    moves |= (king >> 9) & ~ownPieces & ~FILE_H; // down-right
 
-U64 whiteKingMove(U64 whiteKing, U64 whiteOccupancy){
-
-    U64 canMove = ~whiteOccupancy; // check team's pieces
-    U64 goLeft = (whiteKing<<1) & canMove & ~FILE_A ;
-    U64 goRight = (whiteKing>>1) & canMove & ~FILE_H ;
-    U64 goUp = (whiteKing<<8) & canMove;
-    U64 goDown = (whiteKing>>8) & canMove;
-
-    return goLeft | goRight | goUp | goDown;
-
-};
+    return moves;
+}
