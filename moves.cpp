@@ -63,14 +63,8 @@ U64 kingMove(U64 king, U64 blackOcc, U64 whiteOcc, int color)
 }
 
 U64 knightMoves(U64 knight, U64 blackOcc, U64 whiteOcc, int color){
-    
-    U64 ownPieces=0;
-    if(color == WHITE){
-        ownPieces = whiteOcc;
-    }
-    else{
-        ownPieces = blackOcc;
-    }
+
+    U64 ownPieces = (color == WHITE) ? whiteOcc : blackOcc;
 
     U64 moves = 0;
     
@@ -94,5 +88,127 @@ U64 knightMoves(U64 knight, U64 blackOcc, U64 whiteOcc, int color){
     moves &= ~ownPieces;
 
     return moves;
+}
 
+U64 bishopMoves(U64 bishops, U64 blackOcc, U64 whiteOcc, int color) {
+    U64 moves = 0;
+    U64 own = (color == 0) ? whiteOcc : blackOcc;
+    U64 opp = (color == 0) ? blackOcc : whiteOcc;
+    U64 b = bishops;
+    while (b) {
+        // isolate a single rook
+        U64 bishop = b & -b;
+        b -= bishop;
+        if(color == WHITE) {
+            own = whiteOcc;
+            opp = blackOcc;
+        } else {
+            own = blackOcc;
+            opp = whiteOcc;
+        }
+        int from = __builtin_ctzll(bishop);  // rook square index 0~63
+        int rank = from / 8;
+        int file = from % 8;
+        // up-right
+        for (int r = rank + 1, f = file + 1; r < 8 && f < 8; ++r, ++f) {
+            U64 bit = 1ULL << (r*8 + f);
+            if (own & bit) break;
+            moves |= bit;
+            if (opp & bit) break;
+        }
+        // up-left
+        for (int r = rank + 1, f = file - 1; r < 8 && f >= 0; ++r, --f) {
+            U64 bit = 1ULL << (r*8 + f);
+            if (own & bit) break;
+            moves |= bit;
+            if (opp & bit) break;
+        }
+        // down-right
+        for (int r = rank - 1, f = file + 1; r >= 0 && f < 8; --r, ++f) {
+            U64 bit = 1ULL << (r*8 + f);
+            if (own & bit) break;
+            moves |= bit;
+            if (opp & bit) break;
+        }
+        // down-left
+        for (int r = rank - 1, f = file - 1; r >= 0 && f >= 0; --r, --f) {
+            U64 bit = 1ULL << (r*8 + f);
+            if (own & bit) break;
+            moves |= bit;
+            if (opp & bit) break;
+        }
+    }
+    return moves;
+}
+
+
+
+U64 rookMoves(U64 rooks, U64 blackOcc, U64 whiteOcc, int color) {
+    U64 moves = 0;
+    U64 ownPieces = 0;
+    U64 oppPieces = 0;
+    U64 rbb = rooks;
+
+    while (rbb) {
+        // isolate a single rook
+        U64 rook = rbb & -rbb;
+        rbb -= rook;
+        if(color == WHITE) {
+            ownPieces = whiteOcc;
+            oppPieces = blackOcc;
+        } else {
+            ownPieces = blackOcc;
+            oppPieces = whiteOcc;
+        }
+        int from = __builtin_ctzll(rook);  // rook square index 0~63
+
+        int rank = from / 8;
+        int file = from % 8;
+
+        // 4 방향: ↑ ↓ → ←
+
+        // ↑ (up)
+        for (int r = rank + 1; r < 8; r++) {
+            int sq = r * 8 + file;
+            U64 bit = 1ULL << sq;
+
+            // if it's our piece, stop
+            if(ownPieces & bit) break;
+            moves|= bit;
+            // if it's opponent's piece, stop but include the square
+            if (oppPieces & bit) break; // blocked
+        }
+        // down
+        for (int r = rank - 1; r >= 0; r--) {
+            int sq = r * 8 + file;
+            U64 bit = 1ULL << sq;
+            if (ownPieces & bit) break;
+            moves |= bit;
+            if (oppPieces & bit) break;
+        }
+
+        // right
+        for (int f = file + 1; f < 8; f++) {
+            int sq = rank * 8 + f;
+            U64 bit = 1ULL << sq;
+            if (ownPieces & bit) break;
+            moves |= bit;
+            if (oppPieces & bit) break;
+        }
+
+        // left
+        for (int f = file - 1; f >= 0; f--) {
+            int sq = rank * 8 + f;
+            U64 bit = 1ULL << sq;
+            if (ownPieces & bit) break;
+            moves |= bit;
+            if (oppPieces & bit) break;
+        }
+    }
+    return moves;
+}
+U64 queenMoves(U64 queen, U64 blackOcc, U64 whiteOcc, int color) {
+    U64 vertical = rookMoves(queen , blackOcc, whiteOcc, color); 
+    U64 diagonal = bishopMoves(queen , blackOcc, whiteOcc, color);
+    return vertical | diagonal;
 }

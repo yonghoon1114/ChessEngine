@@ -23,10 +23,10 @@ void printBitboard(U64 bb) {
 int main() {
     Board board;
     initBoard(board);
+    printBitboard(board.blackBishops);
+    printBitboard(bishopMoves(board.blackBishops, 0, 0, BLACK));
+    printBitboard(rookMoves(board.whiteRooks, 0, 0, WHITE));
 
-    printBitboard(board.blackPawns);
-    printBitboard(knightMoves(board.blackKnights, board.blackOccupancy, board.whiteOccupancy, BLACK));
-    printBitboard(knightMoves(board.whiteKnights, board.blackOccupancy, board.whiteOccupancy, WHITE));
     return 0;
 }
 

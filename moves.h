@@ -7,5 +7,8 @@ U64 whitePawnMove(U64 whitePawn, U64 allOccupied, U64 blackOccupied);
 U64 blackPawnMove(U64 blackPawn, U64 allOccupied, U64 whiteOccupied);
 U64 kingMove(U64 king, U64 blackOcc, U64 whiteOcc, int color);
 U64 knightMoves(U64 knight, U64 blackOcc, U64 whiteOcc, int color);
+U64 bishopMoves(U64 bishop,  U64 blackOcc, U64 whiteOcc, int color);
+U64 rookMoves(U64 rook, U64 blackOcc, U64 whiteOcc, int color);
+U64 queenMoves(U64 queen, U64 blackOcc, U64 whiteOcc, int color);
 
 #endif
