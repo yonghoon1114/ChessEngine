@@ -9,7 +9,7 @@
 #define FILE_H 0x8080808080808080ULL
 
 using U64 = uint64_t; // 64bit unsigned int
-
+enum Piece { PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, NONE };
 enum Color { WHITE, BLACK };
 
 struct Board {
